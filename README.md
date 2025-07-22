@@ -138,6 +138,7 @@ CREATE TABLE lockouts (
     PRIMARY KEY (email, type)
 );
 ```
+</details>
 
 ## Installation & Setup
 
