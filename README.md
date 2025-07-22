@@ -1,10 +1,10 @@
-# 🔐 Java Swing Authentication System
+# Java Swing Authentication System
 
 This project is a **Java Swing-based authentication system** built with **Maven** and backed by a **MySQL** database. It simulates a real-world multi-page login flow, complete with secure account creation, password management, and email-based verification.
 
 ---
 
-## 🧠 Overview
+## Overview
 
 This application demonstrates a multi-layer authentication system with:
 
@@ -18,7 +18,7 @@ The project aims to simulate how authentication works behind the scenes in moder
 
 ---
 
-## ✨ Features
+## Features
 
 - **Login screen** with:
   - Email + password entry
@@ -49,7 +49,7 @@ The project aims to simulate how authentication works behind the scenes in moder
 
 ---
 
-## 🧰 Technologies Used
+## Technologies Used
 
 - **Java 15**
 - **Java Swing** (GUI)
@@ -63,12 +63,12 @@ The project aims to simulate how authentication works behind the scenes in moder
 
 ---
 
-## 🗃️ Database Schema
+## Database Schema
 
 Here is the full SQL schema to create the necessary MySQL database and tables:
 
 <details>
-<summary>Click to expand full SQL schema</summary>
+<summary>Click to expand full SQL schema (this file is also included in the directory)</summary>
 
 ```sql
 -- Create schema
@@ -137,3 +137,58 @@ CREATE TABLE lockouts (
     lockout_until TIMESTAMP NOT NULL,
     PRIMARY KEY (email, type)
 );
+```
+
+## Installation & Setup
+
+### 1. Prerequisites
+
+Make sure you have the following installed:
+
+- Java JDK 15+
+- Maven
+- MySQL Server
+- *(Optional)* MySQL Workbench for GUI
+- A Gmail or SMTP-capable email address (for sending verification codes)
+
+---
+
+### 2. Clone the Repository
+
+```bash
+git clone https://github.com/colinkula/AuthSystem.git
+cd auth_system
+```
+
+### 3. Create the MySQL Database
+
+- Open **MySQL Workbench** or use your terminal.
+- Paste and execute the SQL schema provided above or in the directory.
+- Update your credentials accordingly.
+
+### 4. Configure config.properties
+
+Create a file named config.properties in the resource folder of the project. It should be the same as config.example.properties but with you information:
+
+```config.properties
+DB_URL=jdbc:mysql://localhost:3306/auth_system
+DB_USERNAME=your_mysql_username
+DB_PASSWORD=your_mysql_password
+
+email.verification.enabled=true
+mail.username=your_email@example.com
+mail.password=your_email_password
+```
+Note: If youre using Gmail, you may need to enable App Passwords or allow less secure apps.
+
+### 5. Run the Application
+
+Use Maven to compile and run the project:
+
+```bash
+maven clean install
+mvn exec:java
+```
+This will launch the Swing GUI and begin the authentication system.
+
+
