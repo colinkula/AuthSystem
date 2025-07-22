@@ -1,122 +1,139 @@
-# SpotifyApp
+# 🔐 Java Swing Authentication System
 
-## Overview
-
-> *[Add a brief description of the project here — what it does, its main features, and the problem it solves]*
-
-SpotifyApp is a Java desktop application that connects to a MySQL database to manage and display Spotify-related data. It leverages HikariCP for efficient database connection pooling and uses SLF4J for logging.
+This project is a **Java Swing-based authentication system** built with **Maven** and backed by a **MySQL** database. It simulates a real-world multi-page login flow, complete with secure account creation, password management, and email-based verification.
 
 ---
 
-## Features
+## 🧠 Overview
 
-- Connects securely to a MySQL database using connection pooling (HikariCP)
-- Reads database configuration from an external properties file for better security
-- Simple Swing-based GUI interface for user login and navigation
-- Uses SLF4J API with Simple implementation for logging
-- Built and managed with Maven for dependency management and build automation
+This application demonstrates a multi-layer authentication system with:
 
----
+- Account creation
+- Email verification with temporary codes
+- Secure login
+- Password change and reset flow
+- Two-factor authentication (2FA) based on session trust
 
-## Prerequisites
-
-- Java Development Kit (JDK) version 15 or above  
-  *(Project uses Java features such as Text Blocks introduced in Java 15)*
-- Maven 3.6 or higher
-- MySQL server running with a database named `spotify`
-- MySQL Connector/J driver (managed automatically by Maven)
+The project aims to simulate how authentication works behind the scenes in modern applications. It was inspired by concepts learned while preparing for the **CompTIA Security+** certification exam.
 
 ---
 
-## Setup
+## ✨ Features
 
-### 1. Clone the repository
+- **Login screen** with:
+  - Email + password entry
+  - Toggle password visibility
+  - “Trust this device for 7 days” feature
+  - Buttons to: Log in, Create account, or Change password
 
-```bash
-git clone [repository-url]
-cd spotifyapp
-```
+- **Create account screen**:
+  - Email + password fields
+  - Password visibility toggle
+  - Register + back-to-login buttons
 
-### 2. Configure Database Credentials
+- **Email verification**:
+  - 5-minute temporary codes
+  - Max 3 attempts before lockout
+  - Reusable across flows (registration, 2FA, password reset)
+  - Resend code option
 
-Create a `config.properties` file under `src/main/resources` with the following content:
+- **Change password screen**:
+  - Requires current password, new password, and confirmation
+  - Option to reset if user forgot current password
 
-```properties
-jdbc.url=jdbc:mysql://localhost:3306/spotify
-jdbc.username=root
-jdbc.password=your_password_here
-```
-Replace your_password_here with your actual database password.
+- **Password reset flow**:
+  - Initiated via verification code
+  - Leads to simplified new password screen
 
----
-
-## How to Run
-
-Build and run the application using Maven:
-```bash
-mvn exec:java -Dexec.mainClass="com.kulacolin.spotifyapp.Main"
-```
-Maven will compile the project (if needed) and launch the application.
-
----
-
-## Important Notes
-
-- The application expects the `config.properties` file to be present in the classpath (`src/main/resources`). If the file is missing, the app will fail to start.
-- Sensitive credentials such as database passwords are **not hardcoded**, but are loaded from the properties file to improve security.
-- The project uses the **Java Text Blocks** feature; therefore, **Java 15 or above** is required for compiling and running the code.
+- **Session tracking** for optional 2FA bypass on trusted devices
 
 ---
 
-## Project Structure
+## 🧰 Technologies Used
 
-```
-spotifyapp/
-├── pom.xml                  # Maven build and dependencies
-├── src/
-│   ├── main/
-│   │   ├── java/            # Java source code
-│   │   └── resources/       # Contains config.properties (database config)
-│   └── test/                # Unit tests
-└── target/                  # Compiled classes and packaged JAR
-```
-
----
-
-## Dependencies
-
-- [**HikariCP 5.0.1**](https://github.com/brettwooldridge/HikariCP) – Efficient JDBC connection pooling  
-- [**MySQL Connector/J 9.1.0**](https://dev.mysql.com/downloads/connector/j/) – MySQL database driver  
-- [**SLF4J API 2.0.16**](http://www.slf4j.org/) and [**slf4j-simple 2.0.16**](http://www.slf4j.org/) – Logging framework  
-- [**JUnit 3.8.1**](https://junit.org/junit3/) – Unit testing framework (test scope)  
-
-All dependencies are managed via **Maven**.
+- **Java 15**
+- **Java Swing** (GUI)
+- **Maven** (project and dependency management)
+- **MySQL** (database)
+- **HikariCP** (connection pooling)
+- **Password4j** (secure password hashing)
+- **Jakarta Mail** (email support)
+- **SLF4J + Logback** (logging)
+- **JUnit** (unit testing)
 
 ---
 
-## Troubleshooting
+## 🗃️ Database Schema
 
-### `config.properties not found` error
-- Ensure `config.properties` is located inside `src/main/resources` so it is included in the classpath during runtime.
+Here is the full SQL schema to create the necessary MySQL database and tables:
 
-### Java feature 'Text Blocks' compilation error
-- Confirm your Java compiler version is set to **15 or higher** in your IDE and Maven build.
+<details>
+<summary>Click to expand full SQL schema</summary>
 
-### Database connection issues
-- Verify your **MySQL server is running**, credentials in `config.properties` are correct, and the **JDBC URL** matches your setup.
+```sql
+-- Create schema
+CREATE DATABASE IF NOT EXISTS auth_system;
+USE auth_system;
 
----
+-- users table
+CREATE TABLE users (
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    email_verified TINYINT(1) NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP NULL
+);
 
-## Future Improvements
+-- user_sessions table
+CREATE TABLE user_sessions (
+    session_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    session_token_hash CHAR(64) NOT NULL UNIQUE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_active_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    device_name VARCHAR(255),
+    ip_address VARCHAR(45),
+    user_agent TEXT,
+    is_ephemeral TINYINT(1) NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
 
-*To be added.*
+-- user_tokens table
+CREATE TABLE user_tokens (
+    verification_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    token_hash CHAR(64) NOT NULL UNIQUE,
+    type ENUM('2FA', 'email', 'login', 'changePass', 'resetPass') NOT NULL DEFAULT '2FA',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_sent_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    verified TINYINT(1) NOT NULL DEFAULT 0,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE CASCADE
+);
 
----
+-- login_attempts table
+CREATE TABLE login_attempts (
+    attempt_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    email_entered VARCHAR(255),
+    success TINYINT(1) NOT NULL,
+    attempt_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    ip_address VARCHAR(45),
+    type ENUM('2FA', 'email', 'login', 'changePass', 'resetPass') NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        ON DELETE SET NULL,
+    INDEX (email_entered)
+);
 
-## Contact
-
-For questions or support, please contact:
-
-**Colin Kula**  
-Email: *your-email@example.com*  
-Phone: **224-212-0475**
+-- lockouts table
+CREATE TABLE lockouts (
+    email VARCHAR(255) NOT NULL,
+    type ENUM('login', '2FA', 'email', 'changePass', 'resetPass') NOT NULL,
+    ip_address VARCHAR(45),
+    lockout_until TIMESTAMP NOT NULL,
+    PRIMARY KEY (email, type)
+);
