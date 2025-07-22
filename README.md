@@ -56,7 +56,7 @@ Here is the full SQL schema to create the necessary MySQL database and tables:
 ```sql
 -- Create schema
 CREATE DATABASE IF NOT EXISTS auth_system;
-USE auth_system;
+USE AuthSystem;
 
 -- users table
 CREATE TABLE users (
@@ -175,10 +175,10 @@ Note: If youre using Gmail, you may need to enable App Passwords or allow less s
 
 ### 5. Run the Application
 
-Make sure you are in auth_system/auth_system. Use Maven to compile and run the project:
+Make sure you are in AuthSystem/auth_system. Use Maven to compile and run the project:
 
 ```bash
-maven clean install
+mvn clean install
 mvn exec:java
 ```
 This will launch the Swing GUI and begin the authentication system.
