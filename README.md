@@ -161,11 +161,15 @@ git clone https://github.com/colinkula/AuthSystem.git
 cd auth_system
 ```
 
+---
+
 ### 3. Create the MySQL Database
 
 - Open **MySQL Workbench** or use your terminal.
 - Paste and execute the SQL schema provided above or in the directory.
 - Update your credentials accordingly.
+
+---
 
 ### 4. Configure config.properties
 
@@ -182,9 +186,11 @@ mail.password=your_email_password
 ```
 Note: If youre using Gmail, you may need to enable App Passwords or allow less secure apps.
 
+---
+
 ### 5. Run the Application
 
-Use Maven to compile and run the project:
+Make sure you are in auth_system/auth_system. Use Maven to compile and run the project:
 
 ```bash
 maven clean install
