@@ -1,51 +1,34 @@
 # Java Swing Authentication System
 
-This project is a **Java Swing-based authentication system** built with **Maven** and backed by a **MySQL** database. It simulates a real-world multi-page login flow, complete with secure account creation, password management, and email-based verification.
+This project is a **robust Java Swing-based authentication system** built with **Maven** and backed by a **MySQL** database. It simulates a real-world, multi-page login flow with secure account creation, password management, and email-based verification. The system is designed with strong security practices, using **Argon2** for password hashing and **SHA-256** for token protection, and demonstrates deep integration across the frontend, backend, and database layers.
 
 ---
 
-## Overview
+### 🔐 Key Features
 
-This application demonstrates a multi-layer authentication system with:
+- **Account Creation with Email Verification**  
+  New users must create an account using their email. A unique verification token is emailed to them. Users have:
+  - 3 attempts to enter the correct token before a 1-minute lockout (enforced via SQL logic)
+  - Option to resend the verification code
+  - Passwords stored securely using Argon2; tokens hashed with SHA-256
 
-- Account creation
-- Email verification with temporary codes
-- Secure login
-- Password change and reset flow
-- Two-factor authentication (2FA) based on session trust
+- **Secure Login Flow**  
+  - Checks if email is verified before login proceeds  
+  - Password authentication and active session validation  
+  - If no valid session, user must pass a built-in **Two-Factor Authentication (2FA)** system  
+  - 2FA mimics email verification: token delivery, resends, and 1-minute lockouts after 3 failed attempts
 
-The project aims to simulate how authentication works behind the scenes in modern applications. It was inspired by concepts learned while preparing for the **CompTIA Security+** certification exam.
+- **"Trust This Device" Option**  
+  - Allows the user to mark a device as trusted for 7 days  
+  - Requires 2FA once to establish the session, which is then stored and validated on future logins
+
+- **Password Management**  
+  - Users can **change passwords** from within their account (requires current password)  
+  - Users can **reset forgotten passwords** via email verification, following the same secure flow
 
 ---
 
-## Features
-
-- **Login screen** with:
-  - Email + password entry
-  - Toggle password visibility
-  - “Trust this device for 7 days” feature
-  - Buttons to: Log in, Create account, or Change password
-
-- **Create account screen**:
-  - Email + password fields
-  - Password visibility toggle
-  - Register + back-to-login buttons
-
-- **Email verification**:
-  - 5-minute temporary codes
-  - Max 3 attempts before lockout
-  - Reusable across flows (registration, 2FA, password reset)
-  - Resend code option
-
-- **Change password screen**:
-  - Requires current password, new password, and confirmation
-  - Option to reset if user forgot current password
-
-- **Password reset flow**:
-  - Initiated via verification code
-  - Leads to simplified new password screen
-
-- **Session tracking** for optional 2FA bypass on trusted devices
+This system demonstrates careful design of authentication layers, secure credential handling, and thoughtful user experience, complete with error handling and verification safeguards. It's a strong foundation for production-grade authentication in Java-based desktop applications.
 
 ---
 
@@ -139,6 +122,8 @@ CREATE TABLE lockouts (
 );
 ```
 </details>
+
+---
 
 ## Installation & Setup
 
