@@ -22,4 +22,4 @@ mvnw.cmd
 # Environment/config
 *.env
 *.local
-src/main/resources/config.properties
+auth_system/src/main/resources/config.properties
