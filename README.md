@@ -198,4 +198,22 @@ mvn exec:java
 ```
 This will launch the Swing GUI and begin the authentication system.
 
+---
 
+## Future Improvements
+
+- Mostly bug fixing
+
+---
+
+## License
+
+This project is open-source. You may use and modify it for educational purposes.
+
+---
+
+# Acknowledgments
+
+Created by Colin Kula as a learning project for authentication and secure login systems.
+
+colin.kulaa@gmail.com
