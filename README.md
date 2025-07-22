@@ -56,7 +56,7 @@ Here is the full SQL schema to create the necessary MySQL database and tables:
 ```sql
 -- Create schema
 CREATE DATABASE IF NOT EXISTS auth_system;
-USE AuthSystem;
+USE auth_system;
 
 -- users table
 CREATE TABLE users (
@@ -143,7 +143,7 @@ Make sure you have the following installed:
 
 ```bash
 git clone https://github.com/colinkula/AuthSystem.git
-cd auth_system
+cd AuthSystem
 ```
 
 ---
